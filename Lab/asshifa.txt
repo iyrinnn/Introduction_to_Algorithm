@@ -1,0 +1,3 @@
+GeeksForGeeks is an excellent platform
+to learn algorithms and data structures
+practice makes perfect

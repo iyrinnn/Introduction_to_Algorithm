@@ -1,0 +1,3140 @@
+Here’s the **clean, complete C++ code** exactly matching the logic shown in your screenshot (Cherry Pickup / Alice & Bob chocolates DP). I’ve written it neatly so you can **copy–paste and run** it on CodeStudio / Coding Ninjas.
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int f(int i, int j1, int j2, int r, int c,
+      vector<vector<int>> &grid,
+      vector<vector<vector<int>>> &dp) {
+
+    // Out of bounds
+    if (j1 < 0 || j2 < 0 || j1 >= c || j2 >= c)
+        return -1e8;
+
+    // Last row
+    if (i == r - 1) {
+        if (j1 == j2)
+            return grid[i][j1];
+        else
+            return grid[i][j1] + grid[i][j2];
+    }
+
+    // Memoization
+    if (dp[i][j1][j2] != -1)
+        return dp[i][j1][j2];
+
+    int maxi = -1e8;
+
+    // Explore all 9 possible moves
+    for (int dj1 = -1; dj1 <= 1; dj1++) {
+        for (int dj2 = -1; dj2 <= 1; dj2++) {
+
+            int value = 0;
+
+            if (j1 == j2)
+                value = grid[i][j1];
+            else
+                value = grid[i][j1] + grid[i][j2];
+
+            value += f(i + 1, j1 + dj1, j2 + dj2, r, c, grid, dp);
+            maxi = max(maxi, value);
+        }
+    }
+
+    return dp[i][j1][j2] = maxi;
+}
+
+int maximumChocolates(int r, int c, vector<vector<int>> &grid) {
+
+    vector<vector<vector<int>>> dp(
+        r, vector<vector<int>>(c, vector<int>(c, -1)));
+
+    // Alice starts at (0,0), Bob at (0,c-1)
+    return f(0, 0, c - 1, r, c, grid, dp);
+}
+
+```
+
+### ✅ What this code does
+
+- Uses **3D DP**: `dp[row][alice_col][bob_col]`
+- Explores **all valid movements** for Alice & Bob
+- Avoids double counting when both land on the same cell
+- Time Complexity: **O(R × C × C × 9)**
+- Space Complexity: **O(R × C × C)**
+
+If you want:
+
+- 🔁 **Tabulation version**
+- 🧠 **Dry run explanation**
+- ⚡ **Optimized space version**
+- 🧪 **Test case runner (main function)**
+
+Just tell me.
+
+Got it 👍
+
+From now on, **whenever you say “give me code”**, I’ll **always include a full `main()` function**, ready to compile and run. No reminders needed.
+
+Here is the **same code with a proper `main()`**, exactly in **Coding Ninjas / CodeStudio style** 👇
+
+---
+
+### ✅ Full Working C++ Code (With `main()`)
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int f(int i, int j1, int j2, int r, int c,
+      vector<vector<int>> &grid,
+      vector<vector<vector<int>>> &dp) {
+
+    // Out of bounds
+    if (j1 < 0 || j2 < 0 || j1 >= c || j2 >= c)
+        return -1e8;
+
+    // Last row
+    if (i == r - 1) {
+        if (j1 == j2)
+            return grid[i][j1];
+        else
+            return grid[i][j1] + grid[i][j2];
+    }
+
+    // Memoization
+    if (dp[i][j1][j2] != -1)
+        return dp[i][j1][j2];
+
+    int maxi = -1e8;
+
+    // Try all 9 moves
+    for (int dj1 = -1; dj1 <= 1; dj1++) {
+        for (int dj2 = -1; dj2 <= 1; dj2++) {
+
+            int value = 0;
+            if (j1 == j2)
+                value = grid[i][j1];
+            else
+                value = grid[i][j1] + grid[i][j2];
+
+            value += f(i + 1, j1 + dj1, j2 + dj2, r, c, grid, dp);
+            maxi = max(maxi, value);
+        }
+    }
+
+    return dp[i][j1][j2] = maxi;
+}
+
+int maximumChocolates(int r, int c, vector<vector<int>> &grid) {
+    vector<vector<vector<int>>> dp(
+        r, vector<vector<int>>(c, vector<int>(c, -1)));
+
+    return f(0, 0, c - 1, r, c, grid, dp);
+}
+
+int main() {
+    int r, c;
+    cin >> r >> c;
+
+    vector<vector<int>> grid(r, vector<int>(c));
+    for (int i = 0; i < r; i++) {
+        for (int j = 0; j < c; j++) {
+            cin >> grid[i][j];
+        }
+    }
+
+    cout << maximumChocolates(r, c, grid);
+    return 0;
+}
+
+```
+
+---
+
+### 🧪 Sample Input
+
+```
+3 4
+2 3 1 2
+3 4 2 2
+5 6 3 5
+
+```
+
+### ✅ Output
+
+```
+21
+
+```
+
+---
+
+If you want:
+
+- **Tabulation version with `main()`**
+- **Space-optimized version**
+- **Line-by-line explanation**
+- **Debug version with prints**
+
+Just say the word 💪
+
+Perfect — this screenshot is the **TABULATION (bottom-up DP)** version of the same **Alice & Bob / Chocolate Pickup** problem.
+
+Below is the **FULL, CLEAN TABULATION CODE WITH `main()`**, ready to **copy-paste and submit** on **CodeStudio / Coding Ninjas** ✅
+
+(No recursion, no memoization.)
+
+---
+
+## ✅ Tabulation (Bottom-Up DP) — WITH `main()`
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int maximumChocolates(int n, int m, vector<vector<int>> &grid) {
+
+    // dp[i][j1][j2] = max chocolates from row i when
+    // Alice at j1 and Bob at j2
+    vector<vector<vector<int>>> dp(
+        n, vector<vector<int>>(m, vector<int>(m, -1e8)));
+
+    // Base case: last row
+    for (int j1 = 0; j1 < m; j1++) {
+        for (int j2 = 0; j2 < m; j2++) {
+            if (j1 == j2)
+                dp[n - 1][j1][j2] = grid[n - 1][j1];
+            else
+                dp[n - 1][j1][j2] = grid[n - 1][j1] + grid[n - 1][j2];
+        }
+    }
+
+    // Fill table from bottom to top
+    for (int i = n - 2; i >= 0; i--) {
+        for (int j1 = 0; j1 < m; j1++) {
+            for (int j2 = 0; j2 < m; j2++) {
+
+                int maxi = -1e8;
+
+                for (int dj1 = -1; dj1 <= 1; dj1++) {
+                    for (int dj2 = -1; dj2 <= 1; dj2++) {
+
+                        int nj1 = j1 + dj1;
+                        int nj2 = j2 + dj2;
+
+                        if (nj1 >= 0 && nj1 < m && nj2 >= 0 && nj2 < m) {
+
+                            int value;
+                            if (j1 == j2)
+                                value = grid[i][j1];
+                            else
+                                value = grid[i][j1] + grid[i][j2];
+
+                            value += dp[i + 1][nj1][nj2];
+                            maxi = max(maxi, value);
+                        }
+                    }
+                }
+
+                dp[i][j1][j2] = maxi;
+            }
+        }
+    }
+
+    // Alice starts at (0,0), Bob at (0,m-1)
+    return dp[0][0][m - 1];
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+
+    vector<vector<int>> grid(n, vector<int>(m));
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            cin >> grid[i][j];
+        }
+    }
+
+    cout << maximumChocolates(n, m, grid);
+    return 0;
+}
+
+```
+
+---
+
+## 🧪 Sample Input
+
+```
+3 4
+2 3 1 2
+3 4 2 2
+5 6 3 5
+
+```
+
+## ✅ Output
+
+```
+21
+
+```
+
+---
+
+## 🔥 Why this version is important
+
+- ✔ No recursion → **faster**
+- ✔ No stack overflow
+- ✔ Interview-preferred
+- ✔ Matches exactly what’s shown in your screenshot
+
+---
+
+If you want next:
+
+- ⚡ **Space-optimized (2 × m × m)**
+- 🧠 **Dry-run on example**
+- 📌 **Explain each loop line-by-line**
+- 🆚 **Memo vs Tabulation comparison**
+
+Just say it.
+
+Perfect — this screenshot is **DP Striver’s 0/1 Knapsack**.
+
+You want the **TABULATION version**, **with `main()`**, **ready to run**.
+
+Below is the **exact standard bottom-up solution** (no recursion).
+
+---
+
+## ✅ 0/1 Knapsack — TABULATION (WITH `main()`)
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int knapsack(vector<int> &weight, vector<int> &value, int n, int maxWeight) {
+
+    // dp[i][w] = max value using items 0..i with capacity w
+    vector<vector<int>> dp(n, vector<int>(maxWeight + 1, 0));
+
+    // Base case: item 0
+    for (int w = weight[0]; w <= maxWeight; w++) {
+        dp[0][w] = value[0];
+    }
+
+    // Fill DP table
+    for (int i = 1; i < n; i++) {
+        for (int w = 0; w <= maxWeight; w++) {
+
+            int notTake = dp[i - 1][w];
+            int take = INT_MIN;
+
+            if (weight[i] <= w) {
+                take = value[i] + dp[i - 1][w - weight[i]];
+            }
+
+            dp[i][w] = max(take, notTake);
+        }
+    }
+
+    return dp[n - 1][maxWeight];
+}
+
+int main() {
+    int n, maxWeight;
+    cin >> n >> maxWeight;
+
+    vector<int> weight(n), value(n);
+    for (int i = 0; i < n; i++) cin >> weight[i];
+    for (int i = 0; i < n; i++) cin >> value[i];
+
+    cout << knapsack(weight, value, n, maxWeight);
+    return 0;
+}
+
+```
+
+---
+
+## 🧪 Sample Input
+
+```
+4 5
+1 2 4 5
+5 4 8 6
+
+```
+
+## ✅ Output
+
+```
+13
+
+```
+
+---
+
+## 🔑 Matches DP Striver exactly
+
+- ✔ Bottom-up tabulation
+- ✔ Same transitions
+- ✔ Interview-standard
+- ✔ Coding Ninjas compatible
+
+---
+
+### Want next?
+
+- ⚡ **Space Optimized (1D DP)**
+- 🧠 **Dry run step-by-step**
+- 🔁 **Recursion → Memo → Tabulation comparison**
+- 🧪 **Edge cases explained**
+
+Just say it 👌
+
+Here — **exactly the same tabulation code as in your screenshot**, and **with `main()`** ✅
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int knapsack(vector<int> wt, vector<int> val, int n, int maxWeight)
+{
+    vector<vector<int>> dp(n, vector<int>(maxWeight + 1, 0));
+
+    // base case for item 0
+    for (int w = wt[0]; w <= maxWeight; w++)
+        dp[0][w] = val[0];
+
+    for (int ind = 1; ind < n; ind++) {
+        for (int w = 0; w <= maxWeight; w++) {
+
+            int notTake = 0 + dp[ind - 1][w];
+            int take = INT_MIN;
+
+            if (wt[ind] <= w) {
+                take = val[ind] + dp[ind - 1][w - wt[ind]];
+            }
+
+            dp[ind][w] = max(take, notTake);
+        }
+    }
+
+    return dp[n - 1][maxWeight];
+}
+
+int main() {
+    int n, maxWeight;
+    cin >> n >> maxWeight;
+
+    vector<int> wt(n), val(n);
+    for (int i = 0; i < n; i++) cin >> wt[i];
+    for (int i = 0; i < n; i++) cin >> val[i];
+
+    cout << knapsack(wt, val, n, maxWeight);
+    return 0;
+}
+
+```
+
+Perfect — this is **DP Striver: Unbounded Knapsack (1-D Space Optimized)**.
+
+As you asked before, here is the **FULL WORKING CODE WITH `main()`**, **copy-paste ready** ✅
+
+---
+
+## ✅ Unbounded Knapsack — 1D Space Optimized (WITH `main()`)
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int unboundedKnapsack(int n, int W, vector<int> &val, vector<int> &wt) {
+
+    // dp[w] = maximum value for capacity w
+    vector<int> dp(W + 1, 0);
+
+    // Base case: using only item 0
+    for (int w = 0; w <= W; w++) {
+        dp[w] = (w / wt[0]) * val[0];
+    }
+
+    // Process remaining items
+    for (int i = 1; i < n; i++) {
+        for (int w = 0; w <= W; w++) {
+
+            int notTake = dp[w];
+            int take = INT_MIN;
+
+            if (wt[i] <= w) {
+                take = val[i] + dp[w - wt[i]]; // NOTE: dp[w - wt[i]]
+            }
+
+            dp[w] = max(take, notTake);
+        }
+    }
+
+    return dp[W];
+}
+
+int main() {
+    int n, W;
+    cin >> n >> W;
+
+    vector<int> wt(n), val(n);
+    for (int i = 0; i < n; i++) cin >> wt[i];
+    for (int i = 0; i < n; i++) cin >> val[i];
+
+    cout << unboundedKnapsack(n, W, val, wt);
+    return 0;
+}
+
+```
+
+---
+
+## 🧪 Sample Input
+
+```
+3 10
+2 4 6
+5 11 13
+
+```
+
+## ✅ Output
+
+```
+27
+
+```
+
+---
+
+## 🔑 Key DP Striver Logic (Very Important)
+
+- **Unbounded** → item can be reused
+- So when taking an item:
+    
+    ```cpp
+    take = val[i] + dp[w - wt[i]];
+    
+    ```
+    
+    ❌ NOT `dp[i-1][...]`
+    
+    ✅ SAME row (`dp[w - wt[i]]`)
+    
+
+---
+
+## 📌 Complexity
+
+- **Time:** `O(N × W)`
+- **Space:** `O(W)` 🔥
+
+---
+
+If you want next:
+
+- 🔁 Memo → Tabulation → 1D comparison
+- 🧠 Dry run on example
+- ⚡ Even cleaner CodeStudio version
+- 🧪 Tricky test cases explained
+
+Just tell me.
+
+Got it 👍
+
+This screenshot is **DP Striver – Longest Common Subsequence (LCS)**.
+
+You want the **TABULATION (bottom-up) version**, **WITH `main()`**, ready to run.
+
+Below is the **exact interview-standard tabulation code** 👇
+
+---
+
+## ✅ Longest Common Subsequence — TABULATION (WITH `main()`)
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int lcs(string s, string t) {
+    int n = s.size();
+    int m = t.size();
+
+    // dp[i][j] = LCS length of s[0..i-1] and t[0..j-1]
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            if (s[i - 1] == t[j - 1]) {
+                dp[i][j] = 1 + dp[i - 1][j - 1];
+            } else {
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
+    }
+
+    return dp[n][m];
+}
+
+int main() {
+    string s, t;
+    cin >> s >> t;
+
+    cout << lcs(s, t);
+    return 0;
+}
+
+```
+
+---
+
+## 🧪 Sample Input
+
+```
+abcde
+ace
+
+```
+
+## ✅ Output
+
+```
+3
+
+```
+
+---
+
+## 🔑 Key DP Striver Notes
+
+- Index shift (`i-1`, `j-1`) avoids negative indices
+- `dp[0][*]` and `dp[*][0]` automatically 0 (base case)
+- Matches **Top-Down logic → Bottom-Up**
+
+---
+
+## ⏱ Complexity
+
+- **Time:** `O(N × M)`
+- **Space:** `O(N × M)`
+
+---
+
+If you want next (very common follow-ups):
+
+- ⚡ **Space Optimized LCS (2 rows / 1D)**
+- 🧠 **Print the LCS string**
+- 🔁 **Recursive → Memo → Tabulation comparison**
+- 🔥 **LCS → Longest Palindromic Subsequence**
+
+Just say it.
+
+Perfect — these screenshots show **DP Striver – LCS (Top-Down + Bottom-Up)**.
+
+As per your rule, I’m giving **FULL CODE WITH `main()`** ✅
+
+I’ll give **both versions**, exactly matching what’s on screen.
+
+---
+
+# ✅ LCS — TOP-DOWN (Memoization) WITH `main()`
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int f(int i, int j, string &s, string &t, vector<vector<int>> &dp) {
+    if (i < 0 || j < 0) return 0;
+
+    if (dp[i][j] != -1) return dp[i][j];
+
+    if (s[i] == t[j])
+        return dp[i][j] = 1 + f(i - 1, j - 1, s, t, dp);
+
+    return dp[i][j] = max(
+        f(i - 1, j, s, t, dp),
+        f(i, j - 1, s, t, dp)
+    );
+}
+
+int lcs(string s, string t) {
+    int n = s.size(), m = t.size();
+    vector<vector<int>> dp(n, vector<int>(m, -1));
+    return f(n - 1, m - 1, s, t, dp);
+}
+
+int main() {
+    string s, t;
+    cin >> s >> t;
+    cout << lcs(s, t);
+    return 0;
+}
+
+```
+
+---
+
+# ✅ LCS — BOTTOM-UP (TABULATION) WITH `main()`
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int lcs(string s, string t) {
+    int n = s.size();
+    int m = t.size();
+
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            if (s[i - 1] == t[j - 1])
+                dp[i][j] = 1 + dp[i - 1][j - 1];
+            else
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+        }
+    }
+
+    return dp[n][m];
+}
+
+int main() {
+    string s, t;
+    cin >> s >> t;
+    cout << lcs(s, t);
+    return 0;
+}
+
+```
+
+---
+
+## 🧪 Sample Input
+
+```
+abcde
+ace
+
+```
+
+## ✅ Output
+
+```
+3
+
+```
+
+---
+
+## 🔑 Key Difference (Exam / Interview Gold)
+
+| Version | Indices | DP Size |
+| --- | --- | --- |
+| Memo | `i, j` from end | `n × m` |
+| Tabu | shifted (`i-1`) | `(n+1) × (m+1)` |
+
+---
+
+If you want next (very common DP Striver flow):
+
+- 🔥 **Print the LCS**
+- ⚡ **Space Optimized LCS (2 rows / 1D)**
+- 🔁 **LCS → Longest Palindromic Subsequence**
+- 🧠 **Dry run exactly like Striver explains**
+
+Just say which one 👍
+
+Perfect — this is **DP Striver: DP-26 Print Longest Common Subsequence**.
+
+As per your rule, here is the **FULL, EXACT LOGIC + `main()`**, **copy-paste ready** ✅
+
+(This matches what’s shown in your screenshot.)
+
+---
+
+## ✅ Print Longest Common Subsequence (WITH `main()`)
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    string s, t;
+    cin >> s >> t;
+
+    int n = s.size();
+    int m = t.size();
+
+    // Step 1: Build DP table for LCS length
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            if (s[i - 1] == t[j - 1])
+                dp[i][j] = 1 + dp[i - 1][j - 1];
+            else
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+        }
+    }
+
+    // Step 2: Length of LCS
+    int len = dp[n][m];
+
+    // Step 3: Create result string filled with placeholders
+    string ans = "";
+    for (int i = 0; i < len; i++) ans += '$';
+
+    // Step 4: Backtrack to construct LCS
+    int index = len - 1;
+    int i = n, j = m;
+
+    while (i > 0 && j > 0) {
+        if (s[i - 1] == t[j - 1]) {
+            ans[index] = s[i - 1];
+            index--;
+            i--;
+            j--;
+        }
+        else if (dp[i - 1][j] > dp[i][j - 1]) {
+            i--;
+        }
+        else {
+            j--;
+        }
+    }
+
+    // Step 5: Print LCS
+    cout << ans;
+    return 0;
+}
+
+```
+
+---
+
+## 🧪 Sample Input
+
+```
+abcde
+bdgek
+
+```
+
+## ✅ Output
+
+```
+bde
+
+```
+
+---
+
+## 🔑 Key Ideas (Very Important for Exams)
+
+- Build **LCS length DP table**
+- Backtrack from `dp[n][m]`
+- Move:
+    - ↖️ if characters match
+    - ⬆️ or ⬅️ based on larger DP value
+- Pre-allocate string to avoid reverse
+
+---
+
+## ⏱ Complexity
+
+- **Time:** `O(N × M)`
+- **Space:** `O(N × M)`
+
+---
+
+If you want next in DP Striver sequence:
+
+- 🔥 **Print ALL LCS**
+- ⚡ **Space Optimized + Print (tricky)**
+- 🔁 **LCS → Longest Palindromic Subsequence**
+- 🧠 **Dry run line-by-line like Striver**
+
+Just tell me 👍
+
+Here’s the **Longest Common Substring (Tabulation)** code exactly like your screenshot, **WITH `main()`** ✅
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int lcs(string &s, string &t) {
+    int n = s.size();
+    int m = t.size();
+
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+
+    int ans = 0;
+
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            if (s[i - 1] == t[j - 1]) {
+                dp[i][j] = 1 + dp[i - 1][j - 1];
+                ans = max(ans, dp[i][j]);
+            } else {
+                dp[i][j] = 0;
+            }
+        }
+    }
+
+    return ans;
+}
+
+int main() {
+    string s, t;
+    cin >> s >> t;
+
+    cout << lcs(s, t);
+    return 0;
+}
+
+```
+
+✅ Output = **length of longest common substring**.
+
+Here’s the **Longest Palindromic Subsequence** code (same approach as your screenshot: **LPS = LCS(s, reverse(s))**), **WITH `main()`** ✅
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int lcs(string &s, string &t) {
+    int n = s.size(), m = t.size();
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            if (s[i - 1] == t[j - 1])
+                dp[i][j] = 1 + dp[i - 1][j - 1];
+            else
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+        }
+    }
+    return dp[n][m];
+}
+
+int longestPalindromeSubsequence(string s) {
+    string t = s;
+    reverse(t.begin(), t.end());
+    return lcs(s, t);
+}
+
+int main() {
+    string s;
+    cin >> s;
+    cout << longestPalindromeSubsequence(s);
+    return 0;
+}
+
+```
+
+Perfect — this is **DP Striver: DP-29 Minimum Insertions to Make String Palindrome**.
+
+As per your rule, here is the **FULL WORKING CODE WITH `main()`**, **copy-paste ready** ✅
+
+(Uses the standard idea: **Min Insertions = n − LPS**)
+
+---
+
+## ✅ Minimum Insertions to Make String Palindrome (WITH `main()`)
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int lcs(string &s, string &t) {
+    int n = s.size(), m = t.size();
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            if (s[i - 1] == t[j - 1])
+                dp[i][j] = 1 + dp[i - 1][j - 1];
+            else
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+        }
+    }
+    return dp[n][m];
+}
+
+int longestPalindromeSubsequence(string s) {
+    string t = s;
+    reverse(t.begin(), t.end());
+    return lcs(s, t);
+}
+
+int minInsertion(string &str) {
+    int n = str.size();
+    return n - longestPalindromeSubsequence(str);
+}
+
+int main() {
+    string str;
+    cin >> str;
+
+    cout << minInsertion(str);
+    return 0;
+}
+
+```
+
+---
+
+## 🧪 Sample Input
+
+```
+abcaa
+
+```
+
+## ✅ Output
+
+```
+2
+
+```
+
+---
+
+## 🔑 Core Logic (Exam Gold)
+
+- **LPS = LCS(s, reverse(s))**
+- Characters already in LPS don’t need insertion
+- Remaining characters must be inserted
+    
+    👉 **Min Insertions = n − LPS**
+    
+
+---
+
+## ⏱ Complexity
+
+- **Time:** `O(N²)`
+- **Space:** `O(N²)`
+
+---
+
+If you want next in DP Striver order:
+
+- 🔥 **Minimum Deletions to Make Palindrome**
+- ⚡ **Space Optimized version**
+- 🧠 **Dry run exactly like Striver**
+- 🔁 **Convert String A → B (DP-30)**
+
+Just say 👍
+
+Perfect — this is **DP Striver: DP-30 → Minimum Insertions & Deletions to Convert String A to String B**.
+
+As always, here is the **FULL CODE WITH `main()`**, **exactly matching your screenshot logic** ✅
+
+---
+
+## ✅ Convert String A → String B (Min Insertions + Deletions)
+
+### Formula used:
+
+[
+
+\text{operations} = |A| + |B| - 2 \times \text{LCS}(A, B)
+
+]
+
+---
+
+### ✅ Complete C++ Code (WITH `main()`)
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int lcs(string s, string t) {
+    int n = s.size();
+    int m = t.size();
+
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            if (s[i - 1] == t[j - 1])
+                dp[i][j] = 1 + dp[i - 1][j - 1];
+            else
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+        }
+    }
+    return dp[n][m];
+}
+
+int canYouMake(string &str, string &ptr) {
+    return str.size() + ptr.size() - 2 * lcs(str, ptr);
+}
+
+int main() {
+    int t;
+    cin >> t;
+
+    while (t--) {
+        string str, ptr;
+        cin >> str >> ptr;
+        cout << canYouMake(str, ptr) << endl;
+    }
+
+    return 0;
+}
+
+```
+
+---
+
+## 🧪 Sample Input
+
+```
+2
+cue dgo
+aaa aa
+
+```
+
+## ✅ Output
+
+```
+3
+1
+
+```
+
+---
+
+## 🔑 Core DP Insight (Interview Gold)
+
+- Keep the **LCS** intact
+- Characters **not in LCS** must be:
+    - Deleted from `str`
+    - Inserted from `ptr`
+- Hence:
+    
+    **Deletions = |str| − LCS**
+    
+    **Insertions = |ptr| − LCS**
+    
+
+---
+
+## ⏱ Complexity
+
+- **Time:** `O(N × M)`
+- **Space:** `O(N × M)`
+
+---
+
+You’ve now completed **DP-19 → DP-30 (Strings)** from DP Striver 🎯
+
+If you want next:
+
+- 🔥 **Edit Distance (DP-31)**
+- ⚡ **Space Optimized String DP**
+- 🧠 **Full DP Striver roadmap checklist**
+
+Just say the word 👍
+
+Got it — this is **DP Striver DP-31: Shortest Common Supersequence (SCS)**.
+
+You want the **full code with `main()`**, and it should **print the SCS string** (like sample outputs).
+
+Here it is ✅
+
+---
+
+## ✅ Shortest Common Supersequence (WITH `main()`)
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+string shortestCommonSupersequence(string s, string t) {
+    int n = s.size(), m = t.size();
+
+    // LCS DP
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            if (s[i - 1] == t[j - 1])
+                dp[i][j] = 1 + dp[i - 1][j - 1];
+            else
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+        }
+    }
+
+    // Build SCS by backtracking from dp[n][m]
+    string ans = "";
+    int i = n, j = m;
+
+    while (i > 0 && j > 0) {
+        if (s[i - 1] == t[j - 1]) {
+            ans += s[i - 1];
+            i--; j--;
+        } else if (dp[i - 1][j] > dp[i][j - 1]) {
+            ans += s[i - 1];
+            i--;
+        } else {
+            ans += t[j - 1];
+            j--;
+        }
+    }
+
+    // Add remaining characters
+    while (i > 0) {
+        ans += s[i - 1];
+        i--;
+    }
+    while (j > 0) {
+        ans += t[j - 1];
+        j--;
+    }
+
+    reverse(ans.begin(), ans.end());
+    return ans;
+}
+
+int main() {
+    int tc;
+    cin >> tc;
+    while (tc--) {
+        string s, t;
+        cin >> s >> t;
+        cout << shortestCommonSupersequence(s, t) << "\n";
+    }
+    return 0;
+}
+
+```
+
+---
+
+### 🧪 Sample Input
+
+```
+2
+brute groot
+bleed blue
+
+```
+
+### ✅ Output (one valid answer)
+
+```
+bgruoote
+bleued
+
+```
+
+(There can be multiple correct SCS strings; length will be minimum.)
+
+---
+
+Here’s the **Wildcard Pattern Matching** code (same logic as your screenshot: `?` matches 1 char, `*` matches empty or any sequence), **WITH `main()`** ✅
+
+---
+
+## ✅ Wildcard Pattern Matching (Memoization) WITH `main()`
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+bool f(int i, int j, string &pattern, string &text, vector<vector<int>> &dp) {
+    // both finished
+    if (i < 0 && j < 0) return true;
+
+    // pattern finished but text not
+    if (i < 0 && j >= 0) return false;
+
+    // text finished but pattern left -> only valid if all remaining are '*'
+    if (j < 0 && i >= 0) {
+        for (int ii = 0; ii <= i; ii++) {
+            if (pattern[ii] != '*') return false;
+        }
+        return true;
+    }
+
+    if (dp[i][j] != -1) return dp[i][j];
+
+    if (pattern[i] == text[j] || pattern[i] == '?')
+        return dp[i][j] = f(i - 1, j - 1, pattern, text, dp);
+
+    if (pattern[i] == '*')
+        return dp[i][j] = (f(i - 1, j, pattern, text, dp) ||
+                          f(i, j - 1, pattern, text, dp));
+
+    return dp[i][j] = false;
+}
+
+bool wildcardMatching(string pattern, string text) {
+    int n = pattern.size();
+    int m = text.size();
+
+    vector<vector<int>> dp(n, vector<int>(m, -1));
+    return f(n - 1, m - 1, pattern, text, dp);
+}
+
+int main() {
+    string pattern, text;
+    cin >> pattern >> text;
+
+    cout << (wildcardMatching(pattern, text) ? "true" : "false");
+    return 0;
+}
+
+```
+
+---
+
+### 🧪 Example
+
+**Input**
+
+```
+a*b?c
+axxbxc
+
+```
+
+**Output**
+
+```
+true
+
+```
+
+If you want, I can also give **tabulation** + **space optimized** versions (DP Striver style).
+
+Got it — these screenshots are **Wildcard Matching TABULATION** (DP Striver DP-34 style).
+
+Here is the **FULL TABULATION CODE WITH `main()`** ✅ (matches the logic shown: `dp[i][j]` boolean)
+
+---
+
+## ✅ Wildcard Pattern Matching (TABULATION) WITH `main()`
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+bool wildcardMatching(string pattern, string text) {
+    int n = pattern.size();
+    int m = text.size();
+
+    vector<vector<bool>> dp(n + 1, vector<bool>(m + 1, false));
+
+    dp[0][0] = true;
+
+    // dp[0][j] = false for j>=1 (empty pattern can't match non-empty text)
+    for (int j = 1; j <= m; j++) dp[0][j] = false;
+
+    // dp[i][0] = true only if pattern[0..i-1] are all '*'
+    for (int i = 1; i <= n; i++) {
+        bool flag = true;
+        for (int ii = 1; ii <= i; ii++) {
+            if (pattern[ii - 1] != '*') {
+                flag = false;
+                break;
+            }
+        }
+        dp[i][0] = flag;
+    }
+
+    // Fill dp table
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+
+            if (pattern[i - 1] == text[j - 1] || pattern[i - 1] == '?') {
+                dp[i][j] = dp[i - 1][j - 1];
+            }
+            else if (pattern[i - 1] == '*') {
+                dp[i][j] = dp[i - 1][j] || dp[i][j - 1];
+            }
+            else {
+                dp[i][j] = false;
+            }
+        }
+    }
+
+    return dp[n][m];
+}
+
+int main() {
+    string pattern, text;
+    cin >> pattern >> text;
+
+    cout << (wildcardMatching(pattern, text) ? "true" : "false");
+    return 0;
+}
+
+```
+
+---
+
+If you want the **1D space optimized** version (same DP Striver video title), tell me “1D code”.
+
+This one is **DP-41: Longest Increasing Subsequence (LIS) – Memoization**.
+
+Here is the **same code + `main()`** ✅
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int f(int ind, int prev_ind, vector<int> &arr, vector<vector<int>> &dp) {
+    int n = (int)arr.size();
+    if (ind == n) return 0;
+
+    if (dp[ind][prev_ind + 1] != -1) return dp[ind][prev_ind + 1];
+
+    // not take
+    int len = 0 + f(ind + 1, prev_ind, arr, dp);
+
+    // take
+    if (prev_ind == -1 || arr[ind] > arr[prev_ind]) {
+        len = max(len, 1 + f(ind + 1, ind, arr, dp));
+    }
+
+    return dp[ind][prev_ind + 1] = len;
+}
+
+int longestIncreasingSubsequence(vector<int> &arr) {
+    int n = (int)arr.size();
+    vector<vector<int>> dp(n, vector<int>(n + 1, -1));
+    return f(0, -1, arr, dp);
+}
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> arr(n);
+    for (int i = 0; i < n; i++) cin >> arr[i];
+
+    cout << longestIncreasingSubsequence(arr);
+    return 0;
+}
+
+```
+
+Input format (typical):
+
+- first `n`
+- then `n` integers
+
+Output:
+
+- LIS length
+
+This is **DP-42: LIS Tabulation (the dp[ind][prev+1] table)**.
+
+Here’s the **full code with `main()`** ✅
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int longestIncreasingSubsequence(vector<int> &arr) {
+    int n = (int)arr.size();
+
+    // dp[ind][prev_ind+1]
+    vector<vector<int>> dp(n + 1, vector<int>(n + 1, 0));
+
+    for (int ind = n - 1; ind >= 0; ind--) {
+        for (int prev_ind = ind - 1; prev_ind >= -1; prev_ind--) {
+
+            int len = 0 + dp[ind + 1][prev_ind + 1];
+
+            if (prev_ind == -1 || arr[ind] > arr[prev_ind]) {
+                len = max(len, 1 + dp[ind + 1][ind + 1]);
+            }
+
+            dp[ind][prev_ind + 1] = len;
+        }
+    }
+
+    return dp[0][0];
+}
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> arr(n);
+    for (int i = 0; i < n; i++) cin >> arr[i];
+
+    cout << longestIncreasingSubsequence(arr);
+    return 0;
+}
+
+```
+
+Input:
+
+- `n`
+- `n` integers
+
+Output:
+
+- LIS length
+
+Got it 👍
+
+This screenshot is **DP-42: Printing Longest Increasing Subsequence (LIS)** using **tabulation + backtracking (`hash` array)**.
+
+Below is the **CORRECT, COMPLETE C++ CODE with `main()`**, exactly matching the Striver approach and **prints the LIS sequence**, not just length.
+
+---
+
+## ✅ Printing Longest Increasing Subsequence (DP-42)
+
+### 💡 Idea (very short)
+
+- `dp[i]` = length of LIS ending at `i`
+- `hash[i]` = previous index in LIS
+- Track `lastIndex` where LIS ends
+- Backtrack using `hash` to print sequence
+
+---
+
+## ✅ Full Working Code (with `main()`)
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> printLIS(vector<int>& arr) {
+    int n = arr.size();
+
+    vector<int> dp(n, 1), hash(n);
+    int maxi = 1, lastIndex = 0;
+
+    for (int i = 0; i < n; i++) {
+        hash[i] = i;
+        for (int prev = 0; prev < i; prev++) {
+            if (arr[prev] < arr[i] && dp[prev] + 1 > dp[i]) {
+                dp[i] = dp[prev] + 1;
+                hash[i] = prev;
+            }
+        }
+        if (dp[i] > maxi) {
+            maxi = dp[i];
+            lastIndex = i;
+        }
+    }
+
+    // Backtracking LIS
+    vector<int> lis;
+    lis.push_back(arr[lastIndex]);
+
+    while (hash[lastIndex] != lastIndex) {
+        lastIndex = hash[lastIndex];
+        lis.push_back(arr[lastIndex]);
+    }
+
+    reverse(lis.begin(), lis.end());
+    return lis;
+}
+
+int main() {
+    int n;
+    cin >> n;
+
+    vector<int> arr(n);
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
+    }
+
+    vector<int> lis = printLIS(arr);
+
+    // Print LIS
+    for (int x : lis) cout << x << " ";
+    cout << endl;
+
+    return 0;
+}
+
+```
+
+---
+
+## 📌 Input Format
+
+```
+n
+a1 a2 a3 ... an
+
+```
+
+## 📌 Output
+
+```
+LIS sequence (space separated)
+
+```
+
+---
+
+## 🧠 Example
+
+**Input**
+
+```
+6
+5 4 11 1 16 8
+
+```
+
+**Output**
+
+```
+5 11 16
+
+```
+
+(or another valid LIS)
+
+---
+
+If you want next:
+
+- 🔥 **LIS using Binary Search (O n log n)**
+- 🖨️ **Print LIS in Binary Search version**
+- 📄 **CodeStudio / LeetCode compatible version**
+
+Just tell me 👍
+
+[](https://www.notion.so/2fc7a91135d680efa503de260acfa262?pvs=21)
+
+Perfect — this screenshot is **DP-42: Longest Increasing Subsequence (LIS) – Tabulation (length only)**.
+
+Below is the **exact clean C++ solution WITH `main()`**, matching what’s shown on CodeStudio/Striver. 👇
+
+---
+
+## ✅ LIS (Length Only) — Tabulation
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int longestIncreasingSubsequence(vector<int>& arr) {
+    int n = arr.size();
+    vector<int> dp(n, 1);
+
+    int maxi = 1;
+
+    for (int i = 0; i < n; i++) {
+        for (int prev = 0; prev < i; prev++) {
+            if (arr[prev] < arr[i]) {
+                dp[i] = max(dp[i], 1 + dp[prev]);
+            }
+        }
+        maxi = max(maxi, dp[i]);
+    }
+    return maxi;
+}
+
+int main() {
+    int n;
+    cin >> n;
+
+    vector<int> arr(n);
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
+    }
+
+    cout << longestIncreasingSubsequence(arr) << endl;
+    return 0;
+}
+
+```
+
+---
+
+## 📌 Input Format
+
+```
+n
+a1 a2 a3 ... an
+
+```
+
+## 📌 Output
+
+```
+Length of LIS
+
+```
+
+---
+
+## 🧠 Example
+
+**Input**
+
+```
+6
+5 4 11 1 16 8
+
+```
+
+**Output**
+
+```
+3
+
+```
+
+---
+
+### 🔑 Notes (important for exams/interviews)
+
+- Time Complexity: **O(n²)**
+- Space Complexity: **O(n)**
+- This version returns **only length**, not the sequence
+- Printing LIS = **next DP (hash/parent array)**
+
+If you want:
+
+- ✅ **Print LIS**
+- 🚀 **LIS in O(n log n)**
+- 📄 **CodeStudio exact function signature**
+
+Just say the word.
+
+You dumped a whole bunch of **Striver DP screenshots**. The common thing across them is: **pick a DP state, write a transition, and (if needed) backtrack using the DP table / parent array.**
+
+Here’s the “what to remember” sheet for *each exact problem you showed* (with the key DP idea + formula + how to reconstruct when needed).
+
+---
+
+## 1) **Unbounded Knapsack (DP 23)**
+
+**State:** `dp[i][w]` = max value using items `0..i` with capacity `w` (unlimited usage)
+
+**Transition:**
+
+- notTake: `dp[i-1][w]`
+- take (unbounded ⇒ stay on same `i`): `val[i] + dp[i][w - wt[i]]` if `wt[i] <= w`
+- `dp[i][w] = max(notTake, take)`
+
+**Space-optimized 1D:**
+
+For unbounded, iterate `w` forward:
+
+```cpp
+for (int i=0;i<n;i++)
+  for (int w=wt[i]; w<=W; w++)
+     dp[w] = max(dp[w], val[i] + dp[w-wt[i]]);
+
+```
+
+---
+
+## 2) **LCS Length (DP 25)**
+
+**State:** `dp[i][j]` = LCS length of `s[0..i-1]` and `t[0..j-1]`
+
+**Base:** `dp[0][*]=0`, `dp[*][0]=0`
+
+**Transition:**
+
+- if match: `dp[i][j] = 1 + dp[i-1][j-1]`
+- else: `dp[i][j] = max(dp[i-1][j], dp[i][j-1])`
+
+---
+
+## 3) **Longest Common Substring (DP “Longest Common Substring”)**
+
+**Important difference from LCS:** substring must be **continuous**.
+
+**State:** `dp[i][j]` = length of longest common substring ending at `s[i-1]` and `t[j-1]`
+
+**Transition:**
+
+- if match: `dp[i][j] = 1 + dp[i-1][j-1]`
+- else: `dp[i][j] = 0`
+
+Keep a global `ans = max(ans, dp[i][j])`.
+
+---
+
+## 4) **Print LCS (DP 26)**
+
+First build the normal LCS table `dp`.
+
+**Backtrack from (n,m):**
+
+- if `s[i-1]==t[j-1]`: put that char in answer, `i--, j--`
+- else move to the direction with bigger DP:
+    - if `dp[i-1][j] > dp[i][j-1]` ⇒ `i--`
+    - else ⇒ `j--`
+
+Reverse at the end.
+
+---
+
+## 5) **Longest Palindromic Subsequence (LPS)**
+
+Classic trick in your screenshot:
+
+**LPS(s) = LCS(s, reverse(s))**
+
+So use LCS DP on `s` and `rev`.
+
+---
+
+## 6) **Minimum Insertions to Make Palindrome (DP 29)**
+
+**Key formula:**
+
+> `minInsertions = n - LPS(s)`
+> 
+
+Why: keep the longest palindromic subsequence, insert the rest around it.
+
+---
+
+## 7) **Convert String A to B (your “canYouMake”)**
+
+This is **minimum deletions + insertions** to transform `str` → `ptr`.
+
+**Key formula:**
+
+Let `L = LCS(str, ptr)`
+
+- deletions = `str.size() - L`
+- insertions = `ptr.size() - L`
+- total ops = `(n - L) + (m - L) = n + m - 2*L`
+
+That’s exactly what your screenshot shows:
+
+```cpp
+return str.size() + ptr.size() - 2*lcs(str, ptr);
+
+```
+
+---
+
+## 8) **Shortest Common Supersequence (SCS) (DP 31)**
+
+Length formula:
+
+> `len(SCS) = n + m - LCS(s,t)`
+> 
+
+To **print SCS**, backtrack using LCS dp:
+
+- If chars match: take it once, `i--,j--`
+- Else take the char from the side that has **bigger dp**:
+    - if `dp[i-1][j] > dp[i][j-1]` take `s[i-1]`, `i--`
+    - else take `t[j-1]`, `j--`
+        
+        Then append leftovers of `s` or `t`. Reverse at end.
+        
+
+(That’s what your screenshot shows: build string while walking backwards, then reverse.)
+
+---
+
+## 9) **Wildcard Pattern Matching (`?` and )**
+
+Your screenshots show both recursion and tabulation.
+
+### Meaning
+
+- `?` matches exactly 1 character
+- matches **any sequence** (including empty)
+
+### DP State
+
+`dp[i][j]` = does `pattern[0..i-1]` match `text[0..j-1]`?
+
+### Base
+
+- `dp[0][0]=true`
+- `dp[0][j>0]=false`
+- `dp[i][0]` is true **only if** `pattern[0..i-1]` all are
+
+### Transition
+
+If `pattern[i-1] == text[j-1]` OR `pattern[i-1]=='?'`:
+
+- `dp[i][j] = dp[i-1][j-1]`
+
+If `pattern[i-1]=='*'`:
+
+- `dp[i][j] = dp[i-1][j] // '*' = empty`
+    
+    OR
+    
+    `dp[i][j] = dp[i][j-1] // '*' consumes 1 char from text`
+    
+
+Else:
+
+- `dp[i][j] = false`
+
+That “OR” rule is the whole wildcard problem.
+
+---
+
+## 10) **LIS Length (DP 41 / 42 style)**
+
+### A) Memoization style with `prev_ind`
+
+`f(ind, prev)` = LIS length starting from `ind` when last chosen index is `prev` (`-1` allowed)
+
+Transition:
+
+- notTake = `f(ind+1, prev)`
+- take if `prev==-1 || arr[ind] > arr[prev]`:
+    
+    `1 + f(ind+1, ind)`
+    
+    Answer = `f(0, -1)`
+    
+
+### B) Classic O(n²) DP
+
+`dp[i]` = LIS ending at `i`
+
+`dp[i] = 1 + max(dp[prev]) for all prev<i with arr[prev] < arr[i]`
+
+---
+
+## 11) **Printing LIS (DP 42 “hash/parent”)**
+
+Use:
+
+- `dp[i]` = LIS length ending at i
+- `parent[i]` = previous index in LIS chain
+
+When you update `dp[i]` from `prev`, set:
+
+`parent[i] = prev`
+
+Track `lastIndex` where LIS ends (max dp).
+
+Then reconstruct:
+
+```cpp
+vector<int> lis;
+while(parent[lastIndex] != lastIndex){
+   lis.push_back(arr[lastIndex]);
+   lastIndex = parent[lastIndex];
+}
+lis.push_back(arr[lastIndex]);
+reverse(lis.begin(), lis.end());
+
+```
+
+(Usually init `parent[i]=i`.)
+
+---
+
+## 12) **Largest Divisible Subset (DP 44)**
+
+Same as LIS pattern, but:
+
+- Sort array first
+- Condition becomes: `arr[i] % arr[prev] == 0`
+
+Then do the exact same `dp + parent` reconstruction.
+
+---
+
+## 13) **Longest String Chain (DP 45)**
+
+Sort strings by length increasing.
+
+`dp[i]` = longest chain ending at `arr[i]`
+
+Transition:
+
+For `prev < i`, if `arr[prev]` is predecessor of `arr[i]`:
+
+`dp[i] = max(dp[i], 1 + dp[prev])`
+
+**Predecessor check (as in screenshot):**
+
+`len(s1) == len(s2)+1` and `s2` must be subsequence of `s1` with **one skip**.
+
+Two pointers:
+
+- Walk `s1` and `s2`
+- If match => advance both
+- Else advance only `s1`
+    
+    At end, if `second == s2.size()` => true.
+    
+
+---
+
+# The “pattern” you should notice (this is what Striver is doing every time)
+
+### Two big DP families from your screenshots:
+
+1. **DP on two strings** (LCS / substring / wildcard / SCS / edits)
+    - state is usually `dp[i][j]`
+    - backtracking is usually from `(n,m)` to `(0,0)`
+2. **DP like LIS** (LIS / divisible set / string chain)
+    - state usually `dp[i]` and often `parent[i]` for printing
+
+---
+
+If you tell me **which one is confusing you right now** (pick one: wildcard / SCS printing / LIS printing / string chain), I’ll rewrite that one in a super-clean way (recurrence + final code skeleton) exactly like the screenshots but with zero clutter.
+
+Got it — **Longest String Chain** (DP 45). I see what you’re stuck on: the whole problem is just **LIS-style DP on strings**, and the only “new” thing is the **checkPossible(s1, s2)** function.
+
+Below is the exact logic, clean and bulletproof.
+
+---
+
+## ✅ What the problem really is
+
+You have an array of strings.
+
+String `A` is a predecessor of `B` **iff** you can insert **exactly 1 character anywhere in A** to make it B.
+
+So chain looks like:
+
+`"a" -> "ba" -> "bda" -> "bdca"`
+
+We need **maximum chain length**.
+
+---
+
+## 1) Sort by length
+
+Because predecessor must be length-1.
+
+```cpp
+sort(arr.begin(), arr.end(), [](string &a, string &b){
+    return a.size() < b.size();
+});
+
+```
+
+---
+
+## 2) The key function: `checkPossible(big, small)`
+
+In the screenshot: `s1` is bigger, `s2` is smaller.
+
+**Rule:** `big.size() == small.size() + 1`
+
+Then check if `small` is a subsequence of `big` (with exactly one extra char in `big`).
+
+### ✅ Correct checkPossible (same as Striver)
+
+```cpp
+bool checkPossible(string &big, string &small) {
+    if (big.size() != small.size() + 1) return false;
+
+    int i = 0, j = 0;
+    while (i < (int)big.size()) {
+        if (j < (int)small.size() && big[i] == small[j]) {
+            i++; j++;
+        } else {
+            i++; // skip one char from big
+        }
+    }
+    return (j == (int)small.size());
+}
+
+```
+
+### Why this works
+
+You are allowed to “skip” characters only in `big`.
+
+If after scanning `big`, you matched all of `small`, then `small` can become `big` by inserting 1 extra char.
+
+---
+
+## 3) DP is just LIS
+
+`dp[i] = longest chain ending at arr[i]`
+
+Transition:
+
+If `arr[prev]` is predecessor of `arr[i]`, then:
+
+`dp[i] = max(dp[i], 1 + dp[prev])`
+
+### ✅ Full solution (length only)
+
+```cpp
+int longestStrChain(vector<string>& arr) {
+    sort(arr.begin(), arr.end(), [](string &a, string &b){
+        return a.size() < b.size();
+    });
+
+    int n = arr.size();
+    vector<int> dp(n, 1);
+    int ans = 1;
+
+    for (int i = 0; i < n; i++) {
+        for (int prev = 0; prev < i; prev++) {
+            if (checkPossible(arr[i], arr[prev])) {
+                dp[i] = max(dp[i], 1 + dp[prev]);
+            }
+        }
+        ans = max(ans, dp[i]);
+    }
+    return ans;
+}
+
+```
+
+**Time:** `O(n^2 * L)` where L is string length (because checkPossible scans big string).
+
+Works fine.
+
+---
+
+## Common mistakes (99% people do these)
+
+1. **Swapping arguments**
+    
+    You must call: `checkPossible(arr[i], arr[prev])`
+    
+    ✅ big first, small second.
+    
+2. Forgetting length condition
+    
+    Without `size == size+1`, you’ll accept wrong predecessors.
+    
+3. Comparing with sorting lexicographically instead of length
+    
+    You MUST sort by length.
+    
+
+---
+
+## Quick example to verify your understanding
+
+Array: `["a","b","ba","bca","bda","bdca"]`
+
+Sorted by length:
+
+`a, b, ba, bca, bda, bdca`
+
+- `ba` can come from `a` and `b`
+- `bda` can come from `ba`
+- `bdca` can come from `bda` and `bca`
+
+Answer = `4` (`a -> ba -> bda -> bdca`)
+
+---
+
+If you want, send me **your code** (or the exact line you don’t understand from the screenshot), and I’ll tell you **exactly what’s wrong** in it (no guessing).
+
+Alright — **Largest (Longest) Divisible Subset** problem.
+
+### ✅ Problem (in one line)
+
+Given an array of **distinct** positive integers, return the **largest subset** such that for every pair `(a, b)` in subset:
+
+`a % b == 0` **or** `b % a == 0`.
+
+---
+
+## Core idea (it’s LIS, but with divisibility)
+
+1. **Sort** the array increasing.
+2. Use DP like LIS:
+    - `dp[i]` = length of largest divisible subset ending at `i`
+    - `parent[i]` = previous index in that subset (for reconstruction)
+
+Condition becomes:
+
+- If `arr[i] % arr[prev] == 0`, then `arr[prev]` can be before `arr[i]`.
+
+---
+
+## ✅ C++ solution (prints the subset)
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> largestDivisibleSubset(vector<int>& nums) {
+    int n = nums.size();
+    if (n == 0) return {};
+
+    sort(nums.begin(), nums.end());
+
+    vector<int> dp(n, 1), parent(n);
+    for (int i = 0; i < n; i++) parent[i] = i;
+
+    int maxLen = 1, lastIndex = 0;
+
+    for (int i = 0; i < n; i++) {
+        for (int prev = 0; prev < i; prev++) {
+            if (nums[i] % nums[prev] == 0) {
+                if (dp[prev] + 1 > dp[i]) {
+                    dp[i] = dp[prev] + 1;
+                    parent[i] = prev;
+                }
+            }
+        }
+        if (dp[i] > maxLen) {
+            maxLen = dp[i];
+            lastIndex = i;
+        }
+    }
+
+    // reconstruct answer
+    vector<int> ans;
+    while (parent[lastIndex] != lastIndex) {
+        ans.push_back(nums[lastIndex]);
+        lastIndex = parent[lastIndex];
+    }
+    ans.push_back(nums[lastIndex]);
+
+    reverse(ans.begin(), ans.end());
+    return ans;
+}
+
+```
+
+---
+
+## Example
+
+Input: `[1, 2, 4, 8, 9]`
+
+Sorted: `[1, 2, 4, 8, 9]`
+
+Answer: `[1, 2, 4, 8]`
+
+---
+
+## Complexity
+
+- Sorting: `O(n log n)`
+- DP: `O(n^2)`
+- Space: `O(n)`
+
+---
+
+If you want, paste your exact CodeStudio function signature / your current code, and I’ll modify it to match the platform exactly (same return type, same function name).
+
+Perfect — now I see **exactly** what you’re confused about.
+
+This is **NOT** Longest Divisible Subset.
+
+This is **Number of Longest Increasing Subsequences (LIS count)**.
+
+And yes — there is a **small but deadly mistake** in the code shown in your screenshot 👀
+
+Let’s fix it cleanly.
+
+---
+
+## 🔴 The bug in your screenshot (IMPORTANT)
+
+You wrote:
+
+```cpp
+cnt[i] = cnt[i];   // ❌ wrong
+
+```
+
+and later:
+
+```cpp
+cnt[i] += cnt[j];
+
+```
+
+### ❌ Why this is wrong
+
+When you **find a strictly better LIS ending at `i`**, you must **inherit the count from `prev`**, not from yourself.
+
+---
+
+## ✅ Correct Logic (very important)
+
+We maintain:
+
+- `dp[i]` → length of LIS ending at `i`
+- `cnt[i]` → number of LIS of that length ending at `i`
+
+### Rules:
+
+### Case 1: Found a **longer** LIS
+
+```cpp
+if (arr[prev] < arr[i] && dp[prev] + 1 > dp[i]) {
+    dp[i] = dp[prev] + 1;
+    cnt[i] = cnt[prev];   // ✅ inherit
+}
+
+```
+
+### Case 2: Found **another way** to get same LIS length
+
+```cpp
+else if (arr[prev] < arr[i] && dp[prev] + 1 == dp[i]) {
+    cnt[i] += cnt[prev];  // ✅ add ways
+}
+
+```
+
+---
+
+## ✅ Correct FULL Code (CodeStudio / LeetCode style)
+
+```cpp
+int findNumberOfLIS(vector<int>& arr) {
+    int n = arr.size();
+    vector<int> dp(n, 1), cnt(n, 1);
+
+    int maxi = 1;
+
+    for (int i = 0; i < n; i++) {
+        for (int prev = 0; prev < i; prev++) {
+            if (arr[prev] < arr[i]) {
+                if (dp[prev] + 1 > dp[i]) {
+                    dp[i] = dp[prev] + 1;
+                    cnt[i] = cnt[prev];   // inherit
+                }
+                else if (dp[prev] + 1 == dp[i]) {
+                    cnt[i] += cnt[prev]; // add
+                }
+            }
+        }
+        maxi = max(maxi, dp[i]);
+    }
+
+    int ans = 0;
+    for (int i = 0; i < n; i++) {
+        if (dp[i] == maxi) {
+            ans += cnt[i];
+        }
+    }
+
+    return ans;
+}
+
+```
+
+---
+
+## 🧠 Intuition (easy way to remember)
+
+- **dp grows → copy count**
+- **dp ties → add count**
+
+That’s it.
+
+---
+
+## Example
+
+Input:
+
+```
+[1,3,5,4,7]
+
+```
+
+LIS length = `4`
+
+Number of LIS = `2`
+
+(`1-3-5-7` and `1-3-4-7`)
+
+---
+
+If you want, next I can:
+
+- dry-run this with a tricky example
+- compare this with **Largest Divisible Subset**
+- show how this breaks if inheritance is wrong
+
+Just tell me 👍
+
+Got you bro 👍
+
+You want **SS = Shortest Common Supersequence (SCS)** code, **with `main()`**, clean and ready to run.
+
+Below is the **standard DP + reconstruction solution** (this is what CodeStudio / Striver teaches).
+
+---
+
+## ✅ Shortest Common Supersequence – FULL C++ CODE (with `main()`)
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+string shortestCommonSupersequence(string s, string t) {
+    int n = s.size(), m = t.size();
+
+    // Step 1: LCS DP
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            if (s[i - 1] == t[j - 1])
+                dp[i][j] = 1 + dp[i - 1][j - 1];
+            else
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+        }
+    }
+
+    // Step 2: Build SCS from DP
+    int i = n, j = m;
+    string ans = "";
+
+    while (i > 0 && j > 0) {
+        if (s[i - 1] == t[j - 1]) {
+            ans.push_back(s[i - 1]);
+            i--; j--;
+        }
+        else if (dp[i - 1][j] > dp[i][j - 1]) {
+            ans.push_back(s[i - 1]);
+            i--;
+        }
+        else {
+            ans.push_back(t[j - 1]);
+            j--;
+        }
+    }
+
+    // Remaining characters
+    while (i > 0) {
+        ans.push_back(s[i - 1]);
+        i--;
+    }
+    while (j > 0) {
+        ans.push_back(t[j - 1]);
+        j--;
+    }
+
+    reverse(ans.begin(), ans.end());
+    return ans;
+}
+
+int main() {
+    string s, t;
+    cin >> s >> t;
+
+    cout << shortestCommonSupersequence(s, t) << endl;
+    return 0;
+}
+
+```
+
+---
+
+## 🧠 Logic in one line
+
+> **SCS = merge both strings while preserving LCS order**
+> 
+
+---
+
+## Example
+
+**Input**
+
+```
+brute
+groot
+
+```
+
+**Output**
+
+```
+bgruoote
+
+```
+
+(One valid SCS — multiple answers possible)
+
+---
+
+## Time & Space
+
+- **Time:** `O(n*m)`
+- **Space:** `O(n*m)`
+
+---
+
+If you want next:
+
+- 🔥 **length-only version**
+- 🔥 **space-optimized version**
+- 🔥 **dry run with example**
+- 🔥 **difference between SCS & LCS**
+
+Just say it 👌
+
+Ahh got it now 😄 — **you want the exact code from the *last screenshot***.
+
+That screenshot is **MCM (Matrix Chain Multiplication) – Memoization version**.
+
+Here is the **same code**, clean and correct 👇
+
+---
+
+## ✅ Matrix Chain Multiplication (MCM) – Memoization (C++)
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int f(int i, int j, vector<int> &arr, vector<vector<int>> &dp) {
+    if (i == j) return 0;
+
+    if (dp[i][j] != -1) return dp[i][j];
+
+    int mini = 1e9;
+
+    for (int k = i; k < j; k++) {
+        int steps = arr[i - 1] * arr[k] * arr[j]
+                    + f(i, k, arr, dp)
+                    + f(k + 1, j, arr, dp);
+
+        mini = min(mini, steps);
+    }
+
+    return dp[i][j] = mini;
+}
+
+int matrixMultiplication(vector<int> &arr, int N) {
+    vector<vector<int>> dp(N, vector<int>(N, -1));
+    return f(1, N - 1, arr, dp);
+}
+
+int main() {
+    int N;
+    cin >> N;
+
+    vector<int> arr(N);
+    for (int i = 0; i < N; i++) {
+        cin >> arr[i];
+    }
+
+    cout << matrixMultiplication(arr, N) << endl;
+    return 0;
+}
+
+```
+
+---
+
+## 🧠 What this code does
+
+- Uses **recursion + memoization**
+- Tries all possible partitions `k`
+- Stores results in `dp[i][j]`
+- Avoids TLE by caching subproblems
+
+---
+
+## ⏱️ Complexity
+
+- **Time:** `O(N³)`
+- **Space:** `O(N²)`
+
+---
+
+If you want next:
+
+- ✅ **Tabulation (bottom-up)**
+- ✅ **Explain each line**
+- ✅ **Dry run with example**
+- ✅ **Printing optimal parenthesization**
+
+Just tell me 👊
+
+Yep — this screenshot is **MCM (Matrix Chain Multiplication) – Tabulation (Bottom-Up)**, and your code in the screenshot has a **bug in initialization**:
+
+### ❌ Bug in screenshot
+
+```cpp
+for(int i = 1; i < N; i++) dp[i][j] = 0;
+
+```
+
+Here **`j` is not defined**. You must initialize `dp[i][i] = 0` (diagonal).
+
+---
+
+## ✅ Correct Code (MCM Tabulation) — Same as Screenshot Style
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int matrixMultiplication(vector<int> &arr, int N) {
+    vector<vector<int>> dp(N, vector<int>(N, 0));
+
+    // dp[i][i] = 0 already (single matrix cost is 0)
+
+    for (int i = N - 1; i >= 1; i--) {
+        for (int j = i + 1; j < N; j++) {
+
+            int mini = 1e9;
+
+            for (int k = i; k < j; k++) {
+                int steps = arr[i - 1] * arr[k] * arr[j]
+                            + dp[i][k]
+                            + dp[k + 1][j];
+
+                mini = min(mini, steps);
+            }
+
+            dp[i][j] = mini;
+        }
+    }
+
+    return dp[1][N - 1];
+}
+
+int main() {
+    int N;
+    cin >> N;
+    vector<int> arr(N);
+    for (int i = 0; i < N; i++) cin >> arr[i];
+
+    cout << matrixMultiplication(arr, N) << endl;
+    return 0;
+}
+
+```
+
+---
+
+### If you still get TLE
+
+Then it’s usually because **N is big** on that platform (sometimes 500+). In that case memo/tab both are **O(N³)** and may TLE.
+
+Tell me your **constraints (N max)** from the problem page, and I’ll give you the fastest acceptable version for that limit.
+
+Got you 👍
+
+This is **DP-50: Minimum Cost to Cut a Stick** (Striver DP series).
+
+Below is the **exact working code**, cleaned up, **with `main()`**, same logic as your screenshot.
+
+---
+
+## ✅ Minimum Cost to Cut a Stick (Memoization) — C++
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int f(int i, int j, vector<int> &cuts, vector<vector<int>> &dp) {
+    if (i > j) return 0;
+
+    if (dp[i][j] != -1) return dp[i][j];
+
+    int mini = INT_MAX;
+
+    for (int ind = i; ind <= j; ind++) {
+        int cost = cuts[j + 1] - cuts[i - 1]
+                   + f(i, ind - 1, cuts, dp)
+                   + f(ind + 1, j, cuts, dp);
+
+        mini = min(mini, cost);
+    }
+
+    return dp[i][j] = mini;
+}
+
+int cost(int n, int c, vector<int> &cuts) {
+    // add boundaries
+    cuts.push_back(n);
+    cuts.insert(cuts.begin(), 0);
+
+    sort(cuts.begin(), cuts.end());
+
+    vector<vector<int>> dp(c + 1, vector<int>(c + 1, -1));
+
+    return f(1, c, cuts, dp);
+}
+
+int main() {
+    int n, c;
+    cin >> n >> c;
+
+    vector<int> cuts(c);
+    for (int i = 0; i < c; i++) {
+        cin >> cuts[i];
+    }
+
+    cout << cost(n, c, cuts) << endl;
+    return 0;
+}
+
+```
+
+---
+
+## 🧠 Key Idea (1-line explanation)
+
+Each cut costs the **current stick length**, so try every cut as the first cut and minimize total cost using DP on intervals.
+
+---
+
+## ⏱️ Complexity
+
+- **Time:** `O(c³)`
+- **Space:** `O(c²)`
+
+---
+
+## 🧪 Example
+
+**Input**
+
+```
+7 4
+1 3 4 5
+
+```
+
+**Output**
+
+```
+16
+
+```
+
+---
+
+If you want next:
+
+- 🔁 **Tabulation version**
+- 🧩 **Dry run**
+- 🚀 **Why boundaries 0 & n are needed**
+- 🧠 **Interview explanation**
+
+Just say it.
+
+Here’s the **Rod Cutting (DP-24) code** exactly like your screenshot (memoization), plus a clean `main()` to run it.
+
+---
+
+## ✅ Rod Cutting (Memoization) — C++
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int f(int ind, int N, vector<int> &price, vector<vector<int>> &dp) {
+    if (ind == 0) {
+        return N * price[0];
+    }
+
+    if (dp[ind][N] != -1) return dp[ind][N];
+
+    int notTake = 0 + f(ind - 1, N, price, dp);
+
+    int take = INT_MIN;
+    int rodLength = ind + 1;
+
+    if (rodLength <= N) {
+        take = price[ind] + f(ind, N - rodLength, price, dp);
+    }
+
+    return dp[ind][N] = max(take, notTake);
+}
+
+int cutRod(vector<int> &price, int n) {
+    vector<vector<int>> dp(n, vector<int>(n + 1, -1));
+    return f(n - 1, n, price, dp);
+}
+
+// ------- for testing ----------
+int main() {
+    int n;
+    cin >> n;
+    vector<int> price(n);
+    for (int i = 0; i < n; i++) cin >> price[i];
+
+    cout << cutRod(price, n) << "\n";
+    return 0;
+}
+
+```
+
+---
+
+### ✅ Input format for `main()` (example)
+
+If `n = 5` and prices are `2 5 7 8 10`
+
+**Input**
+
+```
+5
+2 5 7 8 10
+
+```
+
+**Output**
+
+(max profit)
+
+---
+
+If you want, I can also give the **1D space optimized version** (since video title says 1D optimization).
+
+Got it 👍
+
+This screenshot is **DP-24 Rod Cutting – 1D Array Space Optimised (Tabulation)**.
+
+Here is the **exact logic**, rewritten cleanly **with a `main()`**, no extra stuff.
+
+---
+
+## ✅ Rod Cutting — **1D Space Optimised DP (C++)**
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int cutRod(vector<int> &price, int n) {
+    vector<int> dp(n + 1, 0);
+
+    // Base case: using only length-1 rods
+    for (int N = 0; N <= n; N++) {
+        dp[N] = N * price[0];
+    }
+
+    for (int ind = 1; ind < n; ind++) {
+        for (int N = 0; N <= n; N++) {
+            int notTake = dp[N];
+            int take = INT_MIN;
+
+            int rodLength = ind + 1;
+            if (rodLength <= N) {
+                take = price[ind] + dp[N - rodLength];
+            }
+
+            dp[N] = max(take, notTake);
+        }
+    }
+
+    return dp[n];
+}
+
+// -------- main function ----------
+int main() {
+    int n;
+    cin >> n;
+
+    vector<int> price(n);
+    for (int i = 0; i < n; i++) {
+        cin >> price[i];
+    }
+
+    cout << cutRod(price, n) << endl;
+    return 0;
+}
+
+```
+
+---
+
+## ✅ Input format (example)
+
+```
+5
+2 5 7 8 10
+
+```
+
+## ✅ Output
+
+```
+12
+
+```
+
+---
+
+### 🔑 Why this is 1D optimised
+
+- We **reuse `dp[]`**, no `dp[ind][N]`
+- `take` uses **current dp row** → unbounded knapsack pattern
+- Space: **O(n)**
+- Time: **O(n²)**
+
+If you want, I can also give:
+
+- 🔁 **Recursive → Tabulation comparison**
+- 🧠 **Dry run on example**
+- ⚡ **Interview explanation in 3 lines**
+
+Just say the word.
+
+Perfect 👍
+
+This is **DP-6: House Robber II (Circular Houses)** with **1D DP (space-optimized)** — exactly what’s in your screenshot.
+
+Below is the **clean, correct C++ code with a `main()`**, same logic, no extra drama.
+
+---
+
+## ✅ House Robber II — 1D Space Optimised (C++)
+
+### 🔹 Helper: Maximum Non-Adjacent Sum (House Robber I)
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+long long maximumNonAdjacentSum(vector<int> &nums) {
+    int n = nums.size();
+    if (n == 0) return 0;
+    if (n == 1) return nums[0];
+
+    long long prev = nums[0];
+    long long prev2 = 0;
+
+    for (int i = 1; i < n; i++) {
+        long long take = nums[i];
+        if (i > 1) take += prev2;
+
+        long long notTake = prev;
+        long long curi = max(take, notTake);
+
+        prev2 = prev;
+        prev = curi;
+    }
+    return prev;
+}
+
+```
+
+---
+
+### 🔹 Main Logic: **House Robber II (Circular Case)**
+
+```cpp
+long long houseRobber(vector<int> &valueInHouse) {
+    int n = valueInHouse.size();
+    if (n == 1) return valueInHouse[0];
+
+    vector<int> temp1, temp2;
+
+    for (int i = 0; i < n; i++) {
+        if (i != 0) temp1.push_back(valueInHouse[i]);     // exclude first
+        if (i != n - 1) temp2.push_back(valueInHouse[i]); // exclude last
+    }
+
+    return max(maximumNonAdjacentSum(temp1),
+               maximumNonAdjacentSum(temp2));
+}
+
+```
+
+---
+
+### 🔹 `main()` Function
+
+```cpp
+int main() {
+    int n;
+    cin >> n;
+
+    vector<int> valueInHouse(n);
+    for (int i = 0; i < n; i++) {
+        cin >> valueInHouse[i];
+    }
+
+    cout << houseRobber(valueInHouse) << endl;
+    return 0;
+}
+
+```
+
+---
+
+## ✅ Example
+
+**Input**
+
+```
+4
+1 3 2 1
+
+```
+
+**Output**
+
+```
+4
+
+```
+
+---
+
+## 🧠 Key Idea (Interview-ready)
+
+- Circular houses ⇒ **can’t take first & last together**
+- Solve **two linear problems**:
+    - Exclude first
+    - Exclude last
+- Take **maximum of both**
+- Space: **O(1)**
+- Time: **O(n)**
+
+---
+
+If you want next:
+
+- 🔥 Dry run on sample
+- 🔁 Recursive → DP conversion
+- 📌 One-line interview explanation
+
+Just tell me.
+
+Got it 👍
+
+This is **DP-5: Maximum Sum of Non-Adjacent Elements (House Robber I)**.
+
+I’ll give you **clean, correct C++ code**, matching the screenshot logic, plus a **space-optimised version** (which interviewers love).
+
+---
+
+## ✅ DP-5: Maximum Sum of Non-Adjacent Elements
+
+### (House Robber I)
+
+---
+
+## 🔹 1️⃣ Recursion + Memoization (same as screenshot)
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int f(int ind, vector<int> &nums, vector<int> &dp) {
+    if (ind == 0) return nums[0];
+    if (ind < 0) return 0;
+
+    if (dp[ind] != -1) return dp[ind];
+
+    int pick = nums[ind] + f(ind - 2, nums, dp);
+    int notPick = 0 + f(ind - 1, nums, dp);
+
+    return dp[ind] = max(pick, notPick);
+}
+
+int maximumNonAdjacentSum(vector<int> &nums) {
+    int n = nums.size();
+    vector<int> dp(n, -1);
+    return f(n - 1, nums, dp);
+}
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> nums(n);
+    for (int i = 0; i < n; i++) cin >> nums[i];
+
+    cout << maximumNonAdjacentSum(nums) << endl;
+    return 0;
+}
+
+```
+
+---
+
+## 🔹 2️⃣ Space-Optimised (1D DP) ⭐ **Best Version**
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int maximumNonAdjacentSum(vector<int> &nums) {
+    int n = nums.size();
+    if (n == 0) return 0;
+    if (n == 1) return nums[0];
+
+    int prev = nums[0];
+    int prev2 = 0;
+
+    for (int i = 1; i < n; i++) {
+        int pick = nums[i] + prev2;
+        int notPick = prev;
+
+        int cur = max(pick, notPick);
+        prev2 = prev;
+        prev = cur;
+    }
+    return prev;
+}
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> nums(n);
+    for (int i = 0; i < n; i++) cin >> nums[i];
+
+    cout << maximumNonAdjacentSum(nums) << endl;
+    return 0;
+}
+
+```
+
+---
+
+## 🧠 Logic (Very Short)
+
+- **Pick** → add current + `i-2`
+- **Not Pick** → move to `i-1`
+- Answer = `max(pick, notPick)`
+
+---
+
+## ⏱ Complexity
+
+| Type | Value |
+| --- | --- |
+| Time | **O(n)** |
+| Space | **O(1)** (optimised) |
+
+---
+
+## 🔥 Interview One-Liner
+
+> “At every index, I decide whether to pick the element (skip adjacent) or not pick it, and take the maximum.”
+> 
+
+---
+
+If you want next:
+
+- DP-5 → DP-6 **comparison**
+- Dry run on sample
+- Convert to **tabulation**
+
+Just say 👍
